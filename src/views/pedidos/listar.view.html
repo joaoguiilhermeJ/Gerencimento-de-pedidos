@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Pedidos</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/pedido.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gerenciamento de Pedidos</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/pedidos" class="active">Pedidos</a></li>
+                    <li><a href="/produtos">Produtos</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="pedidos-section">
+                <div class="section-header">
+                    <h2>Lista de Pedidos</h2>
+                    <a href="/pedidos/cadastrar" class="btn btn-primary">+ Novo Pedido</a>
+                </div>
+
+                <% if (pedidos && pedidos.length > 0) { %>
+                    <table class="table table-pedidos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% pedidos.forEach(pedido => { %>
+                                <tr>
+                                    <td><%= pedido.id %></td>
+                                    <td><%= new Date(pedido.data).toLocaleDateString('pt-BR') %></td>
+                                    <td><%= pedido.cliente %></td>
+                                    <td>
+                                        <span class="status status-<%= pedido.status.toLowerCase() %>">
+                                            <%= pedido.status %>
+                                        </span>
+                                    </td>
+                                    <td>R$ <%= pedido.total.toFixed(2) %></td>
+                                    <td class="actions">
+                                        <a href="/pedidos/<%= pedido.id %>" class="btn btn-info btn-small">Ver</a>
+                                        <a href="/pedidos/<%= pedido.id %>/editar" class="btn btn-warning btn-small">Editar</a>
+                                        <button class="btn btn-danger btn-small btn-delete-order" data-order-id="<%= pedido.id %>">Deletar</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <p>Nenhum pedido cadastrado.</p>
+                        <a href="/pedidos/cadastrar" class="btn btn-primary">Criar Primeiro Pedido</a>
+                    </div>
+                <% } %>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sistema de Gerenciamento de Pedidos. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script src="/js/script.js"></script>
+    <script>
+        // Deletar pedidos
+        document.querySelectorAll('.btn-delete-order').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const orderId = this.dataset.orderId;
+                if (confirm('Tem certeza que deseja deletar este pedido?')) {
+                    fetch(`/pedidos/${orderId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Pedido deletado com sucesso!');
+                            location.reload();
+                        } else {
+                            alert('Erro ao deletar pedido');
+                        }
+                    })
+                    .catch(error => console.error('Erro:', error));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
