@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Pedido</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/pedido.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gerenciamento de Pedidos</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/pedidos" class="active">Pedidos</a></li>
+                    <li><a href="/produtos">Produtos</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="pedidos-section">
+                <div class="section-header">
+                    <h2>Criar Novo Pedido</h2>
+                </div>
+
+                <form action="/pedidos" method="POST" class="form-pedido" id="formPedido">
+                    <div class="form-group">
+                        <label for="cliente">Cliente:</label>
+                        <input type="text" id="cliente" name="cliente" required placeholder="Nome do cliente">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="data">Data do Pedido:</label>
+                        <input type="date" id="data" name="data" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status">Status:</label>
+                        <select id="status" name="status" required>
+                            <option value="">Selecione um status</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Confirmado">Confirmado</option>
+                            <option value="Enviado">Enviado</option>
+                            <option value="Entregue">Entregue</option>
+                            <option value="Cancelado">Cancelado</option>
+                        </select>
+                    </div>
+
+                    <fieldset class="form-section">
+                        <legend>Itens do Pedido</legend>
+                        
+                        <div id="itens-container">
+                            <div class="item-pedido">
+                                <div class="form-group-inline">
+                                    <div class="form-group">
+                                        <label for="produto-1">Produto:</label>
+                                        <select name="itens[0][produto_id]" required>
+                                            <option value="">Selecione um produto</option>
+                                            <!-- Produtos serão populados aqui -->
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="quantidade-1">Quantidade:</label>
+                                        <input type="number" name="itens[0][quantidade]" min="1" required placeholder="1">
+                                    </div>
+
+                                    <button type="button" class="btn btn-danger btn-small" onclick="removerItem(0)">Remover</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-secondary" id="addItem">+ Adicionar Item</button>
+                    </fieldset>
+
+                    <div class="form-group">
+                        <label>Total do Pedido:</label>
+                        <input type="text" id="total" name="total" readonly placeholder="R$ 0,00" class="input-readonly">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar Pedido</button>
+                        <a href="/pedidos" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sistema de Gerenciamento de Pedidos. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script src="/js/script.js"></script>
+    <script>
+        let itemCount = 1;
+
+        // Definir data padrão como hoje
+        document.getElementById('data').valueAsDate = new Date();
+
+        document.getElementById('addItem').addEventListener('click', function() {
+            const container = document.getElementById('itens-container');
+            const novoItem = document.createElement('div');
+            novoItem.className = 'item-pedido';
+            novoItem.innerHTML = `
+                <div class="form-group-inline">
+                    <div class="form-group">
+                        <label>Produto:</label>
+                        <select name="itens[${itemCount}][produto_id]" required>
+                            <option value="">Selecione um produto</option>
+                            <!-- Produtos serão populados aqui -->
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantidade:</label>
+                        <input type="number" name="itens[${itemCount}][quantidade]" min="1" required placeholder="1">
+                    </div>
+
+                    <button type="button" class="btn btn-danger btn-small" onclick="removerItem(${itemCount})">Remover</button>
+                </div>
+            `;
+            container.appendChild(novoItem);
+            itemCount++;
+        });
+
+        document.getElementById('formPedido').addEventListener('submit', function(e) {
+            const items = document.querySelectorAll('.item-pedido');
+            if (items.length === 0) {
+                e.preventDefault();
+                alert('Adicione pelo menos um item ao pedido');
+            }
+        });
+
+        function removerItem(index) {
+            const items = document.querySelectorAll('.item-pedido');
+            if (items.length > 1) {
+                items[index].remove();
+            } else {
+                alert('O pedido deve ter pelo menos um item');
+            }
+        }
+    </script>
+</body>
+</html>
