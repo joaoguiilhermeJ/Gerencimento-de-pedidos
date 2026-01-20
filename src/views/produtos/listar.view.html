@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Produtos</title>
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <link rel="stylesheet" href="../../public/css/produto.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Gerenciamento de Pedidos</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/pedidos">Pedidos</a></li>
+                    <li><a href="/produtos" class="active">Produtos</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="produtos-section">
+                <div class="section-header">
+                    <h2>Lista de Produtos</h2>
+                    <a href="/produtos/cadastrar" class="btn btn-primary">+ Novo Produto</a>
+                </div>
+
+                <% if (produtos && produtos.length > 0) { %>
+                    <table class="table table-produtos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                <th>Preço</th>
+                                <th>Estoque</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% produtos.forEach(produto => { %>
+                                <tr>
+                                    <td><%= produto.id %></td>
+                                    <td><%= produto.nome %></td>
+                                    <td><%= produto.descricao %></td>
+                                    <td>R$ <%= produto.preco.toFixed(2) %></td>
+                                    <td>
+                                        <span class="estoque <%= produto.estoque > 0 ? 'estoque-disponivel' : 'estoque-indisponivel' %>">
+                                            <%= produto.estoque %> unidades
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="status <%= produto.ativo ? 'status-ativo' : 'status-inativo' %>">
+                                            <%= produto.ativo ? 'Ativo' : 'Inativo' %>
+                                        </span>
+                                    </td>
+                                    <td class="actions">
+                                        <a href="/produtos/<%= produto.id %>/editar" class="btn btn-warning btn-small">Editar</a>
+                                        <button class="btn btn-danger btn-small btn-delete-product" data-product-id="<%= produto.id %>">Deletar</button>
+                                    </td>
+                                </tr>
+                            <% }); %>
+                        </tbody>
+                    </table>
+                <% } else { %>
+                    <div class="empty-state">
+                        <p>Nenhum produto cadastrado.</p>
+                        <a href="/produtos/cadastrar" class="btn btn-primary">Criar Primeiro Produto</a>
+                    </div>
+                <% } %>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sistema de Gerenciamento de Pedidos. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script src="/js/script.js"></script>
+    <script>
+        // Deletar produtos
+        document.querySelectorAll('.btn-delete-product').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productId = this.dataset.productId;
+                if (confirm('Tem certeza que deseja deletar este produto?')) {
+                    fetch(`/produtos/${productId}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Produto deletado com sucesso!');
+                            location.reload();
+                        } else {
+                            alert('Erro ao deletar produto');
+                        }
+                    })
+                    .catch(error => console.error('Erro:', error));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
