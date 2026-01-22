@@ -20,6 +20,19 @@ export async function buscar_cliente(id) {
     return resultado ? { rows: [resultado.toJSON()] } : { rows: [] }
 }
 
+export async function atualizar_cliente(id, dados) {
+    const atualizacao = {}
+    if (dados.nomeCliente) atualizacao.nomeCliente = dados.nomeCliente
+    if (dados.contato) atualizacao.contato = dados.contato
+    if (dados.documento) atualizacao.documento = dados.documento
+
+    await Cliente.update(atualizacao, {
+        where: { id }
+    })
+    
+    const resultado = await Cliente.findByPk(id)
+    return { rows: [resultado.toJSON()] }
+}
 
 export async function deletar_cliente(id) {
     await Cliente.destroy({

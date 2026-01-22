@@ -19,32 +19,30 @@ export async function cadastrar_produto(dados) {
 export async function listar_produtos() {
     const result = await produtoRepository.listar_produtos()
     return result.rows
-
 }
 
-export async function  buscar_produto(id) {
+export async function buscar_produto(id) {
     const idProduto = Number(id)
-    if (!Number.isInteger(idProduto) || idProduto < 0) throw new Error('ID inválido')
+    if (!Number.isInteger(idProduto) || idProduto <= 0) throw new Error('ID inválido')
 
     const result = await produtoRepository.buscar_produto(idProduto)
     return result.rows[0]
 }
 
-export async function  deletar_produto(id) {
+export async function atualizar_status_produto(id, dados) {
     const idProduto = Number(id)
-    if (!Number.isInteger(idProduto) || idProduto < 0) throw new Error('ID inválido')
+    if (!Number.isInteger(idProduto) || idProduto <= 0) throw new Error('ID inválido')
 
-    const result = await produtoRepository.deletar_produto(idProduto)
+    const status = dados.status !== undefined ? Boolean(dados.status) : undefined
+
+    const result = await produtoRepository.atualizar_produto(idProduto, { status })
     return result.rows[0]
 }
 
-export async function adicionar_quantidade(id, quantidade) {
-  const idProduto = Number(id)
-  const quantia = Number(quantidade)
+export async function deletar_produto(id) {
+    const idProduto = Number(id)
+    if (!Number.isInteger(idProduto) || idProduto <= 0) throw new Error('ID inválido')
 
-  if (!Number.isInteger(idProduto) || idProduto <= 0) throw new Error('ID inválido')
-  if (!Number.isInteger(quantia) || quantia <= 0) throw new Error('Quantidade inválida')
-
-  const produto = await produtoRepository.adicionar_quantidade(idProduto, quantia)
-  return produto
+    const result = await produtoRepository.deletar_produto(idProduto)
+    return result.rows[0]
 }

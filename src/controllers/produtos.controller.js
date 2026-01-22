@@ -26,7 +26,7 @@ export async function buscar_produto(req, res) {
         const produto = await produtosService.buscar_produto(id)
         
         if (!produto) {
-            return res.status(404).json({ erro: 'Cliente não encontrado'})
+            return res.status(404).json({ erro: 'Produto não encontrado'})
         }
 
         return res.status(200).json(produto)
@@ -58,7 +58,7 @@ export async function atualizar_status_produto(req, res) {
       return res.status(400).json({ erro: 'ID inválido' })
     }
 
-    const produto = await clienteService.atualizar_status_produto(id)
+    const produto = await produtosService.atualizar_status_produto(id, req.body)
 
     if (!produto) {
       return res.status(404).json({ erro: 'Produto não encontrado' })

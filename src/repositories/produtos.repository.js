@@ -23,13 +23,14 @@ export async function buscar_produto(id) {
 }
 
 export async function atualizar_produto(id, dados) {
-    await Produto.update({
-        nomeProduto: dados.nome,
-        tipo: dados.tipo,
-        valor: dados.valor,
-        quantidade: dados.quantidade,
-        status: dados.status
-    }, {
+    const atualizacao = {}
+    if (dados.nome) atualizacao.nomeProduto = dados.nome
+    if (dados.tipo) atualizacao.tipo = dados.tipo
+    if (dados.valor !== undefined) atualizacao.valor = dados.valor
+    if (dados.quantidade !== undefined) atualizacao.quantidade = dados.quantidade
+    if (dados.status !== undefined) atualizacao.status = dados.status
+
+    await Produto.update(atualizacao, {
         where: { id }
     })
     
