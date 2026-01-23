@@ -36,7 +36,7 @@ export async function atualizar_cliente(id, dados) {
 
 export async function deletar_cliente(id) {
     await Cliente.destroy({
-        where: { id }
+        where: { idCliente: id }
     })
     return { rows: [{ id }] }
 }

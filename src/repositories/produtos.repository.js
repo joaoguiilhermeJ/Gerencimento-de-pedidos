@@ -52,7 +52,7 @@ export async function atualizar_produto(id, dados) {
 
 export async function deletar_produto(id) {
     await Produto.destroy({
-        where: { id }
+        where: { idProduto: id }
     })
     return { rows: [{ id }] }
 }
