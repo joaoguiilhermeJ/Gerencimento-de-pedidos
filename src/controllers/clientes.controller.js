@@ -15,7 +15,7 @@ export async function listar_clientes(req, res) {
         return res.status(200).json(clientes)
     } catch (err) {
         return res.status(500).json({ erro: err.message })
-    }
+    }  
 }
 
 export async function buscar_cliente(req, res) {

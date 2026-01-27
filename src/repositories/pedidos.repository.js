@@ -95,7 +95,7 @@ export async function deletar_pedido(id) {
 }
 
 
-export async function entregar_pedido_com_procedure(idPedido, local) {
+export async function entregar_pedido(idPedido, local) {
   await sequelize.query(
     'CALL entregar_pedido(:idPedido, :local)',
     {

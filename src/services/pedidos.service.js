@@ -133,7 +133,7 @@ export async function entregar_pedido(id, dados) {
     throw new Error("Local é obrigatório");
   }
 
-  const result = await pedidoRepository.entregar_pedido_com_procedure(
+  const result = await pedidoRepository.entregar_pedido(
     idPedido,
     local,
   );

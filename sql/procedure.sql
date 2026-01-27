@@ -56,10 +56,10 @@ CREATE OR REPLACE PROCEDURE entregar_pedido(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    UPDATE Pedido
-       SET horaEntrega = CURRENT_TIMESTAMP,
-           local       = p_local
-     WHERE idPedido    = p_idPedido;
+    UPDATE "Pedido"
+       SET "horaEntrega" = CURRENT_TIMESTAMP,
+           "local"       = p_local
+     WHERE "idPedido"    = p_idPedido;
 END;
 $$;
 
