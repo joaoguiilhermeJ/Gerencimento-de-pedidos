@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Cliente</title>
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/cliente.css">
+</head>
+<body>
+    <div class="container fade-in">
+        <header>
+            <h1>Gerenciamento de Pedidos</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/pedidos">Pedidos</a></li>
+                    <li><a href="/produtos">Produtos</a></li>
+                    <li><a href="/clientes" class="active">Clientes</a></li>
+                    <li><a href="/itens">Itens</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="clientes-section">
+                <div class="section-header">
+                    <h2>Editar Cliente #<%= cliente.idCliente %></h2>
+                </div>
+
+                <form class="form-cliente" id="formCliente">
+                    <div class="form-group">
+                        <label for="nomeCliente">Nome Completo:</label>
+                        <input type="text" id="nomeCliente" name="nomeCliente" value="<%= cliente.nomeCliente %>" required placeholder="Digite o nome do cliente">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contato">Contato (E-mail/Tel):</label>
+                            <input type="text" id="contato" name="contato" value="<%= cliente.contato %>" required placeholder="Ex: email@teste.com">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="documento">CPF/CNPJ:</label>
+                            <input type="text" id="documento" name="documento" value="<%= cliente.documento %>" required placeholder="Digite o documento">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                        <a href="/clientes" class="btn btn-secondary">Cancelar</a>
+                    </div>
+                </form>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sistema de Gerenciamento de Pedidos. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('formCliente').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const id = '<%= cliente.idCliente %>';
+            const formData = new FormData(this);
+            const dados = {
+                nomeCliente: formData.get('nomeCliente'),
+                contato: formData.get('contato'),
+                documento: formData.get('documento')
+            };
+
+            try {
+                const response = await fetch(`/api/clientes/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                if (response.ok) {
+                    alert('Cliente atualizado com sucesso!');
+                    window.location.href = '/clientes';
+                } else {
+                    const result = await response.json();
+                    alert('Erro ao atualizar cliente: ' + (result.erro || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro na comunicação com o servidor');
+            }
+        });
+    </script>
+</body>
+</html>
