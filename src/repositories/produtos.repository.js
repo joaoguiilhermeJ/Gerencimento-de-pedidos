@@ -1,4 +1,4 @@
-import { Produto } from '../models/Produto.js'
+import { Produto } from '../models/index.js'
 
 
 export async function cadastrar_produto(dados) {
