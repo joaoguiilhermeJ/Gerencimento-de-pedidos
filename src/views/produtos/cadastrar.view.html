@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Produto</title>
-    <link rel="stylesheet" href="../../public/css/main.css">
-    <link rel="stylesheet" href="../../public/css/produto.css">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/produto.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container fade-in">
         <header>
             <h1>Gerenciamento de Pedidos</h1>
             <nav>
@@ -16,6 +16,8 @@
                     <li><a href="/">Início</a></li>
                     <li><a href="/pedidos">Pedidos</a></li>
                     <li><a href="/produtos" class="active">Produtos</a></li>
+                    <li><a href="/clientes">Clientes</a></li>
+                    <li><a href="/itens">Itens</a></li>
                 </ul>
             </nav>
         </header>
@@ -26,51 +28,34 @@
                     <h2>Cadastrar Novo Produto</h2>
                 </div>
 
-                <form action="/produtos" method="POST" class="form-produto" id="formProduto">
+                <form class="form-produto" id="formProduto">
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="nome">Nome do Produto:</label>
-                            <input type="text" id="nome" name="nome" required placeholder="Digite o nome do produto">
+                            <label for="nomeProduto">Nome do Produto:</label>
+                            <input type="text" id="nomeProduto" name="nomeProduto" required placeholder="Digite o nome do produto">
                         </div>
 
                         <div class="form-group">
-                            <label for="categoria">Categoria:</label>
-                            <input type="text" id="categoria" name="categoria" placeholder="Digite a categoria">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="descricao">Descrição:</label>
-                        <textarea id="descricao" name="descricao" rows="4" placeholder="Digite a descrição do produto"></textarea>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="preco">Preço (R$):</label>
-                            <input type="number" id="preco" name="preco" min="0" step="0.01" required placeholder="0.00">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="estoque">Estoque:</label>
-                            <input type="number" id="estoque" name="estoque" min="0" required placeholder="0">
+                            <label for="tipo">Categoria/Tipo:</label>
+                            <input type="text" id="tipo" name="tipo" required placeholder="Digite a categoria">
                         </div>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group">
-                            <label for="sku">SKU:</label>
-                            <input type="text" id="sku" name="sku" placeholder="Ex: PROD-001">
+                            <label for="valor">Preço (R$):</label>
+                            <input type="number" id="valor" name="valor" min="0" step="0.01" required placeholder="0.00">
                         </div>
 
                         <div class="form-group">
-                            <label for="codigo_barras">Código de Barras:</label>
-                            <input type="text" id="codigo_barras" name="codigo_barras" placeholder="Digite o código de barras">
+                            <label for="quantidade">Estoque:</label>
+                            <input type="number" id="quantidade" name="quantidade" min="0" required placeholder="0">
                         </div>
                     </div>
 
                     <div class="form-group checkbox-group">
-                        <label for="ativo">
-                            <input type="checkbox" id="ativo" name="ativo" value="true" checked>
+                        <label for="status">
+                            <input type="checkbox" id="status" name="status" value="true" checked>
                             Produto Ativo
                         </label>
                     </div>
@@ -90,26 +75,43 @@
 
     <script src="/js/script.js"></script>
     <script>
-        // Validação adicional do formulário
-        document.getElementById('formProduto').addEventListener('submit', function(e) {
-            const preco = parseFloat(document.getElementById('preco').value);
-            const estoque = parseInt(document.getElementById('estoque').value);
+        document.getElementById('formProduto').addEventListener('submit', async function(e) {
+            e.preventDefault();
 
-            if (isNaN(preco) || preco < 0) {
-                e.preventDefault();
-                alert('Por favor, insira um preço válido');
-                return;
-            }
+            const formData = new FormData(this);
+            const dados = {
+                nomeProduto: formData.get('nomeProduto'),
+                tipo: formData.get('tipo'),
+                valor: parseFloat(formData.get('valor')),
+                quantidade: parseInt(formData.get('quantidade')),
+                status: formData.get('status') === 'true'
+            };
 
-            if (isNaN(estoque) || estoque < 0) {
-                e.preventDefault();
-                alert('Por favor, insira uma quantidade válida para o estoque');
-                return;
+            try {
+                const response = await fetch('/api/produtos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Produto cadastrado com sucesso!');
+                    window.location.href = '/produtos';
+                } else {
+                    alert('Erro ao cadastrar produto: ' + (result.erro || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro na comunicação com o servidor');
             }
         });
 
-        // Máscara para campos monetários
-        document.getElementById('preco').addEventListener('blur', function(e) {
+        // Máscara básica para o campo valor
+        document.getElementById('valor').addEventListener('blur', function(e) {
             let value = parseFloat(e.target.value);
             if (!isNaN(value)) {
                 e.target.value = value.toFixed(2);
