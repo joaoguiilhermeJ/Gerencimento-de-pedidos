@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Listar Produtos</title>
-    <link rel="stylesheet" href="../../public/css/main.css">
-    <link rel="stylesheet" href="../../public/css/produto.css">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/produto.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container fade-in">
         <header>
             <h1>Gerenciamento de Pedidos</h1>
             <nav>
@@ -16,6 +16,8 @@
                     <li><a href="/">Início</a></li>
                     <li><a href="/pedidos">Pedidos</a></li>
                     <li><a href="/produtos" class="active">Produtos</a></li>
+                    <li><a href="/clientes">Clientes</a></li>
+                    <li><a href="/itens">Itens</a></li>
                 </ul>
             </nav>
         </header>
@@ -24,47 +26,49 @@
             <section class="produtos-section">
                 <div class="section-header">
                     <h2>Lista de Produtos</h2>
-                    <a href="/produtos/cadastrar" class="btn btn-primary">+ Novo Produto</a>
+                    <a href="/produtos/novo" class="btn btn-primary">+ Novo Produto</a>
                 </div>
 
                 <% if (produtos && produtos.length > 0) { %>
-                    <table class="table table-produtos">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Descrição</th>
-                                <th>Preço</th>
-                                <th>Estoque</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% produtos.forEach(produto => { %>
+                    <div class="table-container">
+                        <table class="table table-produtos">
+                            <thead>
                                 <tr>
-                                    <td><%= produto.id %></td>
-                                    <td><%= produto.nome %></td>
-                                    <td><%= produto.descricao %></td>
-                                    <td>R$ <%= produto.preco.toFixed(2) %></td>
-                                    <td>
-                                        <span class="estoque <%= produto.estoque > 0 ? 'estoque-disponivel' : 'estoque-indisponivel' %>">
-                                            <%= produto.estoque %> unidades
-                                        </span>
-                                    </td>
-                                    <td>
-                                        <span class="status <%= produto.ativo ? 'status-ativo' : 'status-inativo' %>">
-                                            <%= produto.ativo ? 'Ativo' : 'Inativo' %>
-                                        </span>
-                                    </td>
-                                    <td class="actions">
-                                        <a href="/produtos/<%= produto.id %>/editar" class="btn btn-warning btn-small">Editar</a>
-                                        <button class="btn btn-danger btn-small btn-delete-product" data-product-id="<%= produto.id %>">Deletar</button>
-                                    </td>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Descrição</th>
+                                    <th>Preço</th>
+                                    <th>Estoque</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
                                 </tr>
-                            <% }); %>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                <% produtos.forEach(produto => { %>
+                                    <tr>
+                                        <td><%= produto.idProduto %></td>
+                                        <td><%= produto.nomeProduto %></td>
+                                        <td><%= produto.tipo %></td>
+                                        <td>R$ <%= produto.valor.toFixed(2) %></td>
+                                        <td>
+                                            <span class="estoque <%= produto.quantidade > 0 ? 'estoque-disponivel' : 'estoque-indisponivel' %>">
+                                                <%= produto.quantidade %> unidades
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="status <%= produto.status ? 'status-ativo' : 'status-inativo' %>">
+                                                <%= produto.status ? 'Ativo' : 'Inativo' %>
+                                            </span>
+                                        </td>
+                                        <td class="actions">
+                                            <a href="/produtos/<%= produto.idProduto %>/editar" class="btn btn-warning btn-small">Editar</a>
+                                            <button class="btn btn-danger btn-small btn-delete-product" data-product-id="<%= produto.idProduto %>">Deletar</button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
                 <% } else { %>
                     <div class="empty-state">
                         <p>Nenhum produto cadastrado.</p>
@@ -86,7 +90,7 @@
             btn.addEventListener('click', function() {
                 const productId = this.dataset.productId;
                 if (confirm('Tem certeza que deseja deletar este produto?')) {
-                    fetch(`/produtos/${productId}`, {
+                    fetch(`/api/produtos/${productId}`, {
                         method: 'DELETE'
                     })
                     .then(response => {
