@@ -1,4 +1,4 @@
-import { Cliente } from '../models/Cliente.js'
+import { Cliente } from '../models/index.js'
 
 export async function cadastrar_cliente(dados) {
     const resultado = await Cliente.create({
