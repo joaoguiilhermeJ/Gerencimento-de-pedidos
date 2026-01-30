@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Clientes</title>
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/cliente.css">
+</head>
+<body>
+    <div class="container fade-in">
+        <header>
+            <h1>Gerenciamento de Pedidos</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">Início</a></li>
+                    <li><a href="/pedidos">Pedidos</a></li>
+                    <li><a href="/produtos">Produtos</a></li>
+                    <li><a href="/clientes" class="active">Clientes</a></li>
+                    <li><a href="/itens">Itens</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <section class="clientes-section">
+                <div class="section-header">
+                    <h2>Lista de Clientes</h2>
+                    <a href="/clientes/novo" class="btn btn-primary">+ Novo Cliente</a>
+                </div>
+
+                <% if (clientes && clientes.length > 0) { %>
+                    <div class="table-container">
+                        <table class="table table-clientes">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nome</th>
+                                    <th>Contato</th>
+                                    <th>Documento</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% clientes.forEach(cliente => { %>
+                                    <tr>
+                                        <td><%= cliente.idCliente %></td>
+                                        <td><%= cliente.nomeCliente %></td>
+                                        <td><%= cliente.contato %></td>
+                                        <td><%= cliente.documento %></td>
+                                        <td class="actions">
+                                            <a href="/clientes/<%= cliente.idCliente %>/editar" class="btn btn-warning btn-small">Editar</a>
+                                            <button class="btn btn-danger btn-small btn-delete-cliente" data-id="<%= cliente.idCliente %>">Deletar</button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+                <% } else { %>
+                    <div class="empty-state">
+                        <p>Nenhum cliente cadastrado.</p>
+                        <a href="/clientes/novo" class="btn btn-primary">Criar Primeiro Cliente</a>
+                    </div>
+                <% } %>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 Sistema de Gerenciamento de Pedidos. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        document.querySelectorAll('.btn-delete-cliente').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.dataset.id;
+                if (confirm('Tem certeza que deseja deletar este cliente?')) {
+                    fetch(`/api/clientes/${id}`, {
+                        method: 'DELETE'
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Cliente deletado com sucesso!');
+                            location.reload();
+                        } else {
+                            alert('Erro ao deletar cliente');
+                        }
+                    })
+                    .catch(error => console.error('Erro:', error));
+                }
+            });
+        });
+    </script>
+</body>
+</html>
