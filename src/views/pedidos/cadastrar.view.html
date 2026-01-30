@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastrar Pedido</title>
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/pedido.css">
+    <link rel="stylesheet" href="/public/css/main.css">
+    <link rel="stylesheet" href="/public/css/pedido.css">
 </head>
 <body>
-    <div class="container">
+    <div class="container fade-in">
         <header>
             <h1>Gerenciamento de Pedidos</h1>
             <nav>
@@ -16,6 +16,8 @@
                     <li><a href="/">Início</a></li>
                     <li><a href="/pedidos" class="active">Pedidos</a></li>
                     <li><a href="/produtos">Produtos</a></li>
+                    <li><a href="/clientes">Clientes</a></li>
+                    <li><a href="/itens">Itens</a></li>
                 </ul>
             </nav>
         </header>
@@ -26,49 +28,46 @@
                     <h2>Criar Novo Pedido</h2>
                 </div>
 
-                <form action="/pedidos" method="POST" class="form-pedido" id="formPedido">
+                <form class="form-pedido" id="formPedido">
                     <div class="form-group">
-                        <label for="cliente">Cliente:</label>
-                        <input type="text" id="cliente" name="cliente" required placeholder="Nome do cliente">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="data">Data do Pedido:</label>
-                        <input type="date" id="data" name="data" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="status">Status:</label>
-                        <select id="status" name="status" required>
-                            <option value="">Selecione um status</option>
-                            <option value="Pendente">Pendente</option>
-                            <option value="Confirmado">Confirmado</option>
-                            <option value="Enviado">Enviado</option>
-                            <option value="Entregue">Entregue</option>
-                            <option value="Cancelado">Cancelado</option>
+                        <label for="idCliente">Cliente:</label>
+                        <select id="idCliente" name="idCliente" required>
+                            <option value="">Selecione um cliente</option>
+                            <% clientes.forEach(cliente => { %>
+                                <option value="<%= cliente.idCliente %>"><%= cliente.nomeCliente %></option>
+                            <% }); %>
                         </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="local">Local da Entrega:</label>
+                        <input type="text" id="local" name="local" required placeholder="Digite o local da entrega">
                     </div>
 
                     <fieldset class="form-section">
                         <legend>Itens do Pedido</legend>
                         
                         <div id="itens-container">
-                            <div class="item-pedido">
+                            <div class="item-pedido" data-index="0">
                                 <div class="form-group-inline">
                                     <div class="form-group">
-                                        <label for="produto-1">Produto:</label>
-                                        <select name="itens[0][produto_id]" required>
+                                        <label>Produto:</label>
+                                        <select name="itens[0][idProduto]" class="select-produto" required>
                                             <option value="">Selecione um produto</option>
-                                            <!-- Produtos serão populados aqui -->
+                                            <% produtos.forEach(produto => { %>
+                                                <option value="<%= produto.idProduto %>" data-preco="<%= produto.valor %>">
+                                                    <%= produto.nomeProduto %> (R$ <%= produto.valor.toFixed(2) %>)
+                                                </option>
+                                            <% }); %>
                                         </select>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="quantidade-1">Quantidade:</label>
-                                        <input type="number" name="itens[0][quantidade]" min="1" required placeholder="1">
+                                        <label>Quantidade:</label>
+                                        <input type="number" name="itens[0][quantidade]" class="input-quantidade" min="1" required value="1">
                                     </div>
 
-                                    <button type="button" class="btn btn-danger btn-small" onclick="removerItem(0)">Remover</button>
+                                    <button type="button" class="btn btn-danger btn-small btn-remove-item">Remover</button>
                                 </div>
                             </div>
                         </div>
@@ -76,9 +75,12 @@
                         <button type="button" class="btn btn-secondary" id="addItem">+ Adicionar Item</button>
                     </fieldset>
 
-                    <div class="form-group">
+                    <div class="form-group resumo-pedido">
                         <label>Total do Pedido:</label>
-                        <input type="text" id="total" name="total" readonly placeholder="R$ 0,00" class="input-readonly">
+                        <div id="calculo-total" class="resumo-item total">
+                            <span>R$ 0,00</span>
+                        </div>
+                        <input type="hidden" id="valorTotal" name="valorTotal" value="0">
                     </div>
 
                     <div class="form-actions">
@@ -97,52 +99,134 @@
     <script src="/js/script.js"></script>
     <script>
         let itemCount = 1;
+        const produtosData = <%- JSON.stringify(locals.produtos || []) %>;
 
-        // Definir data padrão como hoje
-        document.getElementById('data').valueAsDate = new Date();
+        function atualizarTotal() {
+            let total = 0;
+            document.querySelectorAll('.item-pedido').forEach(item => {
+                const select = item.querySelector('.select-produto');
+                const quantidadeInput = item.querySelector('.input-quantidade');
+                
+                const produtoId = select.value;
+                const quantidade = parseInt(quantidadeInput.value) || 0;
+                
+                if (produtoId) {
+                    const produto = produtosData.find(p => p.idProduto == produtoId);
+                    if (produto) {
+                        total += produto.valor * quantidade;
+                    }
+                }
+            });
+            
+            document.querySelector('#calculo-total span').textContent = `R$ ${total.toFixed(2)}`;
+            document.getElementById('valorTotal').value = total;
+        }
 
         document.getElementById('addItem').addEventListener('click', function() {
             const container = document.getElementById('itens-container');
             const novoItem = document.createElement('div');
             novoItem.className = 'item-pedido';
+            novoItem.dataset.index = itemCount;
+            
+            let options = '<option value="">Selecione um produto</option>';
+            produtosData.forEach(produto => {
+                options += `<option value="${produto.idProduto}" data-preco="${produto.valor}">
+                                ${produto.nomeProduto} (R$ ${produto.valor.toFixed(2)})
+                            </option>`;
+            });
+
             novoItem.innerHTML = `
                 <div class="form-group-inline">
                     <div class="form-group">
                         <label>Produto:</label>
-                        <select name="itens[${itemCount}][produto_id]" required>
-                            <option value="">Selecione um produto</option>
-                            <!-- Produtos serão populados aqui -->
+                        <select name="itens[${itemCount}][idProduto]" class="select-produto" required>
+                            ${options}
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label>Quantidade:</label>
-                        <input type="number" name="itens[${itemCount}][quantidade]" min="1" required placeholder="1">
+                        <input type="number" name="itens[${itemCount}][quantidade]" class="input-quantidade" min="1" required value="1">
                     </div>
 
-                    <button type="button" class="btn btn-danger btn-small" onclick="removerItem(${itemCount})">Remover</button>
+                    <button type="button" class="btn btn-danger btn-small btn-remove-item">Remover</button>
                 </div>
             `;
             container.appendChild(novoItem);
+            
+            // Adicionar listeners para o novo item
+            novoItem.querySelector('.select-produto').addEventListener('change', atualizarTotal);
+            novoItem.querySelector('.input-quantidade').addEventListener('input', atualizarTotal);
+            novoItem.querySelector('.btn-remove-item').addEventListener('click', function() {
+                removerItem(novoItem);
+            });
+            
             itemCount++;
+            atualizarTotal();
         });
 
-        document.getElementById('formPedido').addEventListener('submit', function(e) {
-            const items = document.querySelectorAll('.item-pedido');
-            if (items.length === 0) {
-                e.preventDefault();
-                alert('Adicione pelo menos um item ao pedido');
-            }
+        // Listeners para o primeiro item
+        document.querySelector('.select-produto').addEventListener('change', atualizarTotal);
+        document.querySelector('.input-quantidade').addEventListener('input', atualizarTotal);
+        document.querySelector('.btn-remove-item').addEventListener('click', function() {
+            removerItem(document.querySelector('.item-pedido'));
         });
 
-        function removerItem(index) {
+        function removerItem(element) {
             const items = document.querySelectorAll('.item-pedido');
             if (items.length > 1) {
-                items[index].remove();
+                element.remove();
+                atualizarTotal();
             } else {
                 alert('O pedido deve ter pelo menos um item');
             }
         }
+
+        document.getElementById('formPedido').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const items = [];
+            document.querySelectorAll('.item-pedido').forEach(item => {
+                const idProduto = item.querySelector('.select-produto').value;
+                const quantidade = item.querySelector('.input-quantidade').value;
+                if (idProduto && quantidade) {
+                    items.push({ idProduto: parseInt(idProduto), quantidade: parseInt(quantidade) });
+                }
+            });
+
+            if (items.length === 0) {
+                alert('Adicione pelo menos um item ao pedido');
+                return;
+            }
+
+            const dados = {
+                idCliente: parseInt(document.getElementById('idCliente').value),
+                local: document.getElementById('local').value,
+                itens: items
+            };
+
+            try {
+                const response = await fetch('/api/pedidos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dados)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert('Pedido criado com sucesso!');
+                    window.location.href = '/pedidos';
+                } else {
+                    alert('Erro ao criar pedido: ' + (result.erro || 'Erro desconhecido'));
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro na comunicação com o servidor');
+            }
+        });
     </script>
 </body>
 </html>
