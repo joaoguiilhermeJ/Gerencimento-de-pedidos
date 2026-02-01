@@ -51,7 +51,6 @@
 }
 
 .feature-card:hover {
-    transform: translateY(-10px);
     box-shadow: var(--shadow-lg);
 }
 
@@ -113,7 +112,6 @@
 
 .benefits-list li:hover {
     background-color: #e0f2fe;
-    transform: translateX(5px);
 }
 
 /* ============================================
