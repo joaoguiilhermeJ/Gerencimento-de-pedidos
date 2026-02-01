@@ -17,7 +17,7 @@
                     <li><a href="/pedidos" class="active">Pedidos</a></li>
                     <li><a href="/produtos">Produtos</a></li>
                     <li><a href="/clientes">Clientes</a></li>
-                    <li><a href="/itens">Itens</a></li>
+                    <li><a href="/itens">Itens Pedidos</a></li>
                 </ul>
             </nav>
         </header>
@@ -25,7 +25,7 @@
         <main>
             <section class="pedidos-section">
                 <div class="section-header">
-                    <h2>Detalhes do Pedido #<%= pedido.id %></h2>
+                    <h2>Detalhes do Pedido #<%= pedido.idPedido %></h2>
                 </div>
 
                 <div class="pedido-detalhes">
@@ -47,7 +47,9 @@
                         </div>
                         <div class="info-item">
                             <label>Status:</label>
-                            <span class="status status-confirmado">Confirmado</span>
+                            <span class="status status-<%= pedido.horaEntrega ? 'entregue' : 'pendente' %>">
+                                <%= pedido.horaEntrega ? 'Entregue' : 'Pendente' %>
+                            </span>
                         </div>
                     </div>
 
@@ -69,8 +71,8 @@
                                             <tr>
                                                 <td><%= item.produto_nome %></td>
                                                 <td><%= item.quantidade %></td>
-                                                <td>R$ <%= item.valorUnitario.toFixed(2) %></td>
-                                                <td>R$ <%= (item.quantidade * item.valorUnitario).toFixed(2) %></td>
+                                                <td>R$ <%= Number(item.valorUnitario || 0).toFixed(2) %></td>
+                                                <td>R$ <%= (item.quantidade * Number(item.valorUnitario || 0)).toFixed(2) %></td>
                                             </tr>
                                         <% }); %>
                                     </tbody>

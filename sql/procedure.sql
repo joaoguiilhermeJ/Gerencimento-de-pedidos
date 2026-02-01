@@ -1,5 +1,6 @@
 
 
+
 CREATE OR REPLACE PROCEDURE cadastrar_pedido(
     IN p_idCliente INT,
     IN p_local     VARCHAR,
@@ -57,8 +58,7 @@ LANGUAGE plpgsql
 AS $$
 BEGIN
     UPDATE "Pedido"
-       SET "horaEntrega" = CURRENT_TIMESTAMP,
-           "local"       = p_local
+       SET "horaEntrega" = CURRENT_TIMESTAMP
      WHERE "idPedido"    = p_idPedido;
 END;
 $$;

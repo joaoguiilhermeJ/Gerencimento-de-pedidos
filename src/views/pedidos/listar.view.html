@@ -17,7 +17,7 @@
                     <li><a href="/pedidos" class="active">Pedidos</a></li>
                     <li><a href="/produtos">Produtos</a></li>
                     <li><a href="/clientes">Clientes</a></li>
-                    <li><a href="/itens">Itens</a></li>
+                    <li><a href="/itens">Itens Pedidos</a></li>
                 </ul>
             </nav>
         </header>
@@ -29,6 +29,11 @@
                     <a href="/pedidos/novo" class="btn btn-primary">+ Novo Pedido</a>
                 </div>
 
+                <% 
+                    const hoje = new Date().toLocaleDateString('pt-BR');
+                    const pedidosHoje = pedidos.filter(p => p.horaPedido && new Date(p.horaPedido).toLocaleDateString('pt-BR') === hoje).length;
+                    const pedidosPendentes = pedidos.filter(p => !p.horaEntrega).length;
+                %>
                 <div class="order-stats">
                     <div class="stat-card">
                         <label>Total de Pedidos</label>
@@ -36,21 +41,14 @@
                     </div>
                     <div class="stat-card">
                         <label>Pedidos Hoje</label>
-                        <div class="value">0</div>
+                        <div class="value"><%= pedidosHoje %></div>
                     </div>
                     <div class="stat-card">
-                        <label>Aguardando Pagamento</label>
-                        <div class="value">0</div>
+                        <label>Pedidos Pendentes</label>
+                        <div class="value"><%= pedidosPendentes %></div>
                     </div>
                 </div>
-
-                <div class="form-pedido" style="padding: 15px; margin-bottom: 20px;">
-                    <div class="form-group-inline" style="grid-template-columns: 1fr auto;">
-                        <input type="text" placeholder="Pesquisar por cliente ou ID..." id="searchOrders">
-                        <button class="btn btn-secondary">Filtrar</button>
-                    </div>
-                </div>
-
+ <br>
                 <% if (pedidos && pedidos.length > 0) { %>
                     <div class="table-container">
                         <table class="table table-pedidos">
@@ -71,8 +69,8 @@
                                         <td><%= pedido.horaPedido ? new Date(pedido.horaPedido).toLocaleDateString('pt-BR') : 'N/A' %></td>
                                         <td>Cliente #<%= pedido.idCliente %></td>
                                         <td>
-                                            <span class="status status-confirmado">
-                                                Confirmado
+                                            <span class="status status-<%= pedido.horaEntrega ? 'entregue' : 'pendente' %>">
+                                                <%= pedido.horaEntrega ? 'Entregue' : 'Pendente' %>
                                             </span>
                                         </td>
                                         <td>R$ <%= (pedido.valorTotal || 0).toFixed(2) %></td>

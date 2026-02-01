@@ -17,7 +17,7 @@
                     <li><a href="/pedidos">Pedidos</a></li>
                     <li><a href="/produtos">Produtos</a></li>
                     <li><a href="/clientes">Clientes</a></li>
-                    <li><a href="/itens" class="active">Itens</a></li>
+                    <li><a href="/itens" class="active">Itens Pedidos</a></li>
                 </ul>
             </nav>
         </header>
@@ -39,6 +39,8 @@
                                     <th>Qtd</th>
                                     <th>Valor Unit.</th>
                                     <th>Total Item</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -50,6 +52,22 @@
                                         <td><%= item.quantidade %></td>
                                         <td>R$ <%= (item.valorUnitario || 0).toFixed(2) %></td>
                                         <td>R$ <%= (item.quantidade * (item.valorUnitario || 0)).toFixed(2) %></td>
+                                        <td>
+                                            <span class="status status-<%= (item.Pedido && item.Pedido.horaEntrega) ? 'entregue' : 'pendente' %>">
+                                                <%= (item.Pedido && item.Pedido.horaEntrega) ? 'Entregue' : 'Pendente' %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <% if (!item.Pedido || !item.Pedido.horaEntrega) { %>
+                                                <button class="btn btn-success btn-small btn-confirm-delivery" 
+                                                        data-order-id="<%= item.idPedido %>"
+                                                        data-local="<%= item.Pedido ? item.Pedido.local : '' %>">
+                                                    Confirmar Entrega
+                                                </button>
+                                            <% } else { %>
+                                                -
+                                            <% } %>
+                                        </td>
                                     </tr>
                                 <% }); %>
                             </tbody>
@@ -67,5 +85,37 @@
             <p>&copy; 2026 Sistema de Gerenciamento de Pedidos. Todos os direitos reservados.</p>
         </footer>
     </div>
+    <script>
+        document.querySelectorAll('.btn-confirm-delivery').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const orderId = this.dataset.orderId;
+                const local = this.dataset.local || 'Local não informado';
+                
+                if (confirm('Deseja confirmar a entrega deste pedido?')) {
+                    fetch(`/api/pedidos/${orderId}/entregar`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ local: local })
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('Entrega confirmada com sucesso!');
+                            location.reload();
+                        } else {
+                            return response.json().then(data => {
+                                alert('Erro ao confirmar entrega: ' + (data.erro || 'Erro desconhecido'));
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                        alert('Erro ao conectar com o servidor');
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

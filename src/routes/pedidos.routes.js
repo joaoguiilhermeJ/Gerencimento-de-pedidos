@@ -9,7 +9,7 @@ router.get('/pedidos', pedidosController.listar_pedidos)
 router.get('/pedidos/:id', validarID, pedidosController.buscar_pedido)
 router.put('/pedidos/:id', validarID, pedidosController.atualizar_pedido)
 router.delete('/pedidos/:id', validarID, pedidosController.deletar_pedido)
-router.put('/pedidos/:id/entrega', validarID, pedidosController.entregar_pedido)
+router.post('/pedidos/:id/entregar', validarID, pedidosController.entregar_pedido)
 router.get('/itens', pedidosController.listar_itens)
 
 export default router
