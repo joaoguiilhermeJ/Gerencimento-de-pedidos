@@ -64,8 +64,22 @@ app.get('/pedidos/:id', async (req, res) => {
     try {
         const id = req.params.id
         const pedido = await pedidosService.buscar_pedido(id)
-        // Você pode precisar buscar os itens separadamente se o service não trouxer
+        
+        if (!pedido) {
+            throw new Error('Pedido não encontrado')
+        }
+
         res.render('pedidos/detalhes.view.html', { pedido, itens: pedido.itens || [] })
+    } catch (err) {
+        res.status(404).send('Pedido não encontrado')
+    }
+})
+
+app.get('/pedidos/:id/editar', async (req, res) => {
+    try {
+        const pedido = await pedidosService.buscar_pedido(req.params.id)
+        const produtos = await produtosService.listar_produtos()
+        res.render('pedidos/editar.view.html', { pedido, produtos })
     } catch (err) {
         res.status(404).send('Pedido não encontrado')
     }
