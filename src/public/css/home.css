@@ -28,6 +28,27 @@
     line-height: 1.6;
 }
 
+/* RESPONSIVIDADE ULTRA MOBILE (até 300px) */
+@media (max-width: 300px) {
+    .hero {
+        padding: 20px 10px;
+        margin-bottom: 15px;
+        border-radius: 6px;
+    }
+
+    .hero h1 {
+        font-size: 16px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+
+    .hero p {
+        font-size: 11px;
+        opacity: 0.9;
+        line-height: 1.4;
+    }
+}
+
 /* ============================================
    CARDS DE FEATURES
    ============================================ */
@@ -76,6 +97,41 @@
 .feature-card .btn {
     align-self: center;
     width: 80%;
+}
+
+/* RESPONSIVIDADE ULTRA MOBILE (até 300px) */
+@media (max-width: 300px) {
+    .features {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .feature-card {
+        padding: 10px;
+        border-radius: 6px;
+    }
+
+    .feature-icon {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+
+    .feature-card h3 {
+        font-size: 13px;
+        margin-bottom: 6px;
+    }
+
+    .feature-card p {
+        font-size: 10px;
+        margin-bottom: 10px;
+    }
+
+    .feature-card .btn {
+        width: 100%;
+        padding: 8px 6px;
+        font-size: 10px;
+    }
 }
 
 .info-section {
@@ -169,5 +225,35 @@
 
     .info-section h2 {
         font-size: 20px;
+    }
+}
+
+/* RESPONSIVIDADE ULTRA MOBILE (até 300px) */
+@media (max-width: 300px) {
+    .info-section {
+        padding: 10px;
+        margin-top: 15px;
+        border-radius: 6px;
+    }
+
+    .info-section h2 {
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .benefits-list {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .benefits-list li {
+        padding: 6px;
+        border-radius: 4px;
+        border-left-width: 3px;
+        font-size: 10px;
+    }
+
+    .benefits-list li:hover {
+        background-color: rgba(224, 242, 254, 0.7);
     }
 }

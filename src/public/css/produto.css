@@ -41,6 +41,40 @@
     justify-content: center;
 }
 
+/* RESPONSIVIDADE ULTRA MOBILE (até 300px) */
+@media (max-width: 300px) {
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-produtos {
+        font-size: 9px;
+        min-width: 280px;
+    }
+
+    .table-produtos th,
+    .table-produtos td {
+        padding: 4px;
+    }
+
+    .table-produtos th {
+        font-size: 8px;
+    }
+
+    .table-produtos .actions {
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .table-produtos .actions .btn {
+        width: 100%;
+        padding: 3px;
+        font-size: 7px;
+        margin-bottom: 2px;
+    }
+}
+
 /* Status de Produtos */
 .table-produtos .status {
     font-size: 11px;

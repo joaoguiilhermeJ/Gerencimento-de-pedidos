@@ -28,3 +28,53 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* RESPONSIVIDADE ULTRA MOBILE (até 300px) */
+@media (max-width: 300px) {
+    .clientes-section {
+        padding: 0.25rem 0;
+    }
+
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .table-clientes {
+        font-size: 9px;
+        min-width: 280px;
+    }
+
+    .table-clientes th, .table-clientes td {
+        padding: 4px;
+        font-size: 8px;
+        text-align: left;
+    }
+
+    .table-clientes th {
+        font-weight: 600;
+    }
+
+    .table-clientes .actions {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    .table-clientes .actions .btn {
+        width: 100%;
+        padding: 3px;
+        font-size: 7px;
+        margin-bottom: 2px;
+    }
+
+    .form-cliente {
+        padding: 8px;
+        border-radius: 6px;
+    }
+
+    .form-group-inline {
+        grid-template-columns: 1fr;
+        gap: 6px;
+    }
+}
